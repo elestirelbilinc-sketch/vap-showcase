@@ -8,7 +8,7 @@ AI-powered media execution for autonomous agents.
 ![Python](https://img.shields.io/badge/python-3.11+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-## Overview
+ Overview
 
 VAP is a **media execution engine** for autonomous agents.  
 It orchestrates image, video, and other media generation tasks as controlled, production-grade executions rather than single-shot requests.
@@ -17,13 +17,13 @@ The system is designed to support multiple media providers and protocols under a
 
 ---
 
-## Features
+ Features
 
-- **Media Execution** – Task-based execution for AI-generated media
-- **Image Generation** – High-quality AI image production
-- **Video Generation** – AI-powered video execution
-- **Multi-Protocol Support** – REST API, A2A Protocol, MCP Server
-- **Production Ready** – Built for reliable, long-running workloads
+ **Media Execution** – Task-based execution for AI-generated media
+ **Image Generation** – High-quality AI image production
+**Video Generation** – AI-powered video execution
+**Multi-Protocol Support** – REST API, A2A Protocol, MCP Server
+ **Production Ready** – Built for reliable, long-running workloads
 
 ---
 
