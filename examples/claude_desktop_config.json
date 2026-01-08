@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "vap": {
+      "url": "https://api.vapagent.com/mcp"
+    }
+  }
+}

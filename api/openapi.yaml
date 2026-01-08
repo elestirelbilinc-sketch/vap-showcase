@@ -1,0 +1,123 @@
+openapi: 3.1.0
+info:
+  title: VAP API
+  description: Visual Asset Production API for AI image and video generation
+  version: 1.6.0
+  license:
+    name: MIT
+
+servers:
+  - url: https://api.vapagent.com
+    description: Production
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  version:
+                    type: string
+                    example: 1.6.0
+
+  /v3/generate:
+    post:
+      summary: Generate image
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                  description: Text description of the image
+                  example: A sunset over mountains
+                aspect_ratio:
+                  type: string
+                  enum: ["1:1", "16:9", "9:16", "4:3", "3:4"]
+                  default: "1:1"
+      responses:
+        '200':
+          description: Generation started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  task_id:
+                    type: string
+                  image_url:
+                    type: string
+        '401':
+          description: Unauthorized
+        '402':
+          description: Insufficient balance
+
+  /v3/tasks/{task_id}:
+    get:
+      summary: Get task status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [pending, processing, completed, failed]
+                  result_url:
+                    type: string
+
+  /v3/balance:
+    get:
+      summary: Get account balance
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Balance info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: number
+                  currency:
+                    type: string
+                    example: USD
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
