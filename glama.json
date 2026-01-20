@@ -1,5 +1,8 @@
 {
-  "$schema": "https://glama.ai/schemas/glama.json",
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "elestirelbilinc-sketch"
+  ],
   "name": "vap-mcp-server",
   "version": "1.12.4",
   "description": "MCP server for AI media generation (images, videos, music) with deterministic cost control using reserve-burn-refund billing model",
