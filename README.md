@@ -101,7 +101,9 @@ curl -X POST https://api.vapagent.com/v3/deposits/init \
   -d '{"amount": 5.00, "provider": "crypto"}'
 ```
 
-### Step 3: Configure Claude Desktop
+### Step 3: Configure Your MCP Client
+
+#### Claude Desktop
 
 Add to `claude_desktop_config.json`:
 
@@ -119,7 +121,45 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-Restart Claude Desktop. You're ready.
+#### Cursor
+
+Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
+
+```json
+{
+  "mcpServers": {
+    "vap": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://api.vapagent.com/mcp",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+#### Cline (VS Code)
+
+Add to Cline MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "vap": {
+      "command": "python",
+      "args": ["path/to/mcp/vap_mcp_proxy.py"],
+      "env": {
+        "VAP_API_KEY": "your_api_key"
+      }
+    }
+  }
+}
+```
+
+Restart your client after configuration.
 
 ### Available Tools
 
