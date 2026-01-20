@@ -1,0 +1,74 @@
+{
+  "$schema": "https://glama.ai/schemas/glama.json",
+  "name": "vap-mcp-server",
+  "version": "1.12.4",
+  "description": "MCP server for AI media generation (images, videos, music) with deterministic cost control using reserve-burn-refund billing model",
+  "author": {
+    "name": "elestirelbilinc-sketch",
+    "url": "https://github.com/elestirelbilinc-sketch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elestirelbilinc-sketch/vap-showcase"
+  },
+  "homepage": "https://api.vapagent.com",
+  "documentation": "https://api.vapagent.com/docs",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ai",
+    "media-generation",
+    "image-generation",
+    "video-generation",
+    "music-generation",
+    "cost-control",
+    "budget",
+    "execution-control"
+  ],
+  "tools": [
+    {
+      "name": "generate_image",
+      "description": "Generate AI image with deterministic $0.18 cost"
+    },
+    {
+      "name": "generate_video",
+      "description": "Generate AI video (Veo 3.1) with deterministic $1.96 cost"
+    },
+    {
+      "name": "generate_music",
+      "description": "Generate AI music (Suno V5) with deterministic $0.68 cost"
+    },
+    {
+      "name": "estimate_cost",
+      "description": "Get image generation cost estimate"
+    },
+    {
+      "name": "estimate_video_cost",
+      "description": "Get video generation cost estimate"
+    },
+    {
+      "name": "estimate_music_cost",
+      "description": "Get music generation cost estimate"
+    },
+    {
+      "name": "check_balance",
+      "description": "Check account balance"
+    },
+    {
+      "name": "get_task",
+      "description": "Get task status by ID"
+    },
+    {
+      "name": "list_tasks",
+      "description": "List recent tasks"
+    },
+    {
+      "name": "execute_preset",
+      "description": "Execute named preset"
+    }
+  ],
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://api.vapagent.com/mcp"
+  }
+}
