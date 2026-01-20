@@ -1,0 +1,71 @@
+{
+  "$schema": "https://registry.modelcontextprotocol.io/schemas/server.json",
+  "name": "vap-e",
+  "version": "1.13.0",
+  "description": "Media Execution Control Layer for AI Agents. Reserve-execute-burn/refund pattern for deterministic media generation. High-quality prompt engineering powered by Claude Opus, smart modality-aware refinement at zero extra cost. Input once, get broadcast-ready output. Supports: Images (Flux2 Pro), Video (Veo 3.1), Music (Suno V5).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elestirelbilinc-sketch/vap-showcase"
+  },
+  "homepage": "https://vapagent.com",
+  "author": {
+    "name": "elestirelbilinc-sketch"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ai",
+    "media-generation",
+    "image-generation",
+    "video-generation",
+    "music-generation",
+    "cost-control",
+    "execution-control",
+    "flux",
+    "veo",
+    "suno",
+    "prompt-engineering"
+  ],
+  "categories": [
+    "media",
+    "ai",
+    "content-generation"
+  ],
+  "remotes": {
+    "streamable-http": "https://api.vapagent.com/mcp"
+  },
+  "tools": [
+    {
+      "name": "generate_image",
+      "description": "Generate AI image with Flux2 Pro ($0.18)"
+    },
+    {
+      "name": "generate_video",
+      "description": "Generate AI video with Veo 3.1 ($1.96)"
+    },
+    {
+      "name": "generate_music",
+      "description": "Generate AI music with Suno V5 ($0.68)"
+    },
+    {
+      "name": "estimate_cost",
+      "description": "Get cost estimate before execution"
+    },
+    {
+      "name": "check_balance",
+      "description": "Check account balance"
+    },
+    {
+      "name": "get_task",
+      "description": "Get task status by ID"
+    },
+    {
+      "name": "list_tasks",
+      "description": "List recent tasks"
+    },
+    {
+      "name": "execute_preset",
+      "description": "Execute named preset (streaming_campaign, full_production)"
+    }
+  ]
+}
