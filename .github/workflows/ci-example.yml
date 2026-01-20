@@ -1,14 +1,20 @@
 # VAP SDK CI Example
 # Template for testing VAP SDK integration in your project
 # Copy and customize for your needs
+#
+# NOTE: This is a TEMPLATE file. It uses workflow_dispatch (manual trigger)
+# because this showcase repo doesn't have actual tests.
+# When you copy this to your project, change the trigger to push/pull_request.
 
 name: CI - VAP SDK Tests
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:  # Manual trigger only (template file)
+  # Uncomment below for your project:
+  # push:
+  #   branches: [main]
+  # pull_request:
+  #   branches: [main]
 
 env:
   PYTHON_VERSION: "3.11"
