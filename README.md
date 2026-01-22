@@ -20,33 +20,32 @@
 
 ---
 
-## The Problem
+## Why VAP?
 
-If your agents call paid APIs directly, you don't have:
-- **Cost control** – No budget limits, no spending caps
-- **Retry limits** – Failed calls can loop indefinitely
-- **Failure ownership** – No clear accountability when things go wrong
+When AI agents work with paid APIs, they need:
 
-Your AI agent needs to generate an image. It calls DALL-E. The call fails. It retries. Fails again. Retries 10 more times.
+- **Cost visibility** – Know exactly what you'll pay before execution
+- **Retry control** – Bounded, predictable retry behavior
+- **Clear ownership** – Every task tracked and accountable
 
-**You just burned $5 on nothing.**
+VAP provides this control layer between your agents and media generation APIs.
 
 ---
 
-## The Solution
+## What VAP Does
 
-VAP is an **MCP Server** that provides **Flux image generation**, **Veo 3.1 video generation**, and **Suno V5 music generation** with cost control.
+VAP is an **MCP Server** that provides **Flux image generation**, **Veo 3.1 video generation**, and **Suno V5 music generation** with full cost control.
 
 **Supported AI Models:**
 - **Flux2 Pro** – Photorealistic images
 - **Veo 3.1** – Cinematic videos
 - **Suno V5** – Original music
 
-It enforces:
+**How it works:**
 - **Pre-commit pricing** – Know exact cost before execution
-- **Hard budget guarantees** – Reserve → Burn → Refund model
-- **Deterministic retry behavior** – No runaway costs
-- **Explicit execution ownership** – Every task has an owner
+- **Reserve → Burn → Refund** – Hard budget guarantees
+- **Deterministic behavior** – Predictable results every time
+- **Explicit ownership** – Every task has a clear owner
 
 ---
 
