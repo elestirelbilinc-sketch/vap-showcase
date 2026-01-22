@@ -1,6 +1,6 @@
-# VAP – Flux, Veo, Suno MCP Server for AI Agents
+# VAP Media · Unified MCP Server for AI Agents (Flux · Veo · Suno)
 
-**Generate AI images (Flux), videos (Veo 3.1), and music (Suno V5) with deterministic pricing.**
+**Generate AI images, videos, and music with deterministic pricing.**
 [![MCP Badge](https://lobehub.com/badge/mcp/elestirelbilinc-sketch-vap-showcase)](https://lobehub.com/mcp/elestirelbilinc-sketch-vap-showcase)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 [![Version](https://img.shields.io/badge/version-1.12.4-blue.svg)](https://github.com/elestirelbilinc-sketch/vap-showcase/releases)
@@ -352,6 +352,6 @@ MIT License – see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**VAP – Flux, Veo, Suno MCP Server for AI Media Generation**
+**VAP Media · Unified MCP Server for AI Agents**
 
 *"Deterministic media production for AI agents."*
