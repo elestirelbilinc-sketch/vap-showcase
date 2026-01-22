@@ -22,13 +22,15 @@
 
 ## Why VAP?
 
+VAP is an MCP server that enables image, video, and music generation directly from agentic workflows. It exposes generative media capabilities as portable, pay-per-use tools usable across Claude Desktop, Cursor, and other MCP-compatible clients.
+
 When AI agents work with paid APIs, they need:
 
 - **Cost visibility** – Know exactly what you'll pay before execution
 - **Retry control** – Bounded, predictable retry behavior
 - **Clear ownership** – Every task tracked and accountable
 
-VAP provides this control layer between your agents and media generation APIs.
+VAP provides this control layer.
 
 ---
 
