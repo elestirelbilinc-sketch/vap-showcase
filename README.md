@@ -15,7 +15,7 @@
 **No setup required – start generating in 2 minutes:**
 
 1. **[Create Agent](https://vapagent.com/dashboard/signup.html)** → Get your API key instantly
-2. **[Add Funds](https://vapagent.com/dashboard/deposit.html)** → Crypto (USDT/USDC/BTC/ETH) or Card (coming soon)
+2. **[Add Funds](https://vapagent.com/dashboard/deposit.html)** → Start from $1
 3. **Generate** → Start creating images, videos, and music
 
 ---
