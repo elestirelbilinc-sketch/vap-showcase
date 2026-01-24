@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-VAP MCP Proxy for Claude Desktop
+VAP MCP Proxy - Multi-Mode MCP Server
 
-Bridges Claude Desktop's stdio transport to VAP's HTTP MCP endpoints.
-Claude Desktop communicates via JSON-RPC over stdio, this proxy translates
-those requests to HTTP calls to the VAP API.
+Bridges Claude Desktop and HTTP clients to VAP's HTTP MCP endpoints.
+Supports two modes:
+- stdio: For Claude Desktop (JSON-RPC over stdin/stdout)
+- http: For Glama.ai and other MCP inspectors (JSON-RPC over HTTP)
 
-Supported Tools (10 total):
-- generate_image: Generate AI images (~$0.002 each, Z-Image-Turbo)
-- generate_video: Generate AI videos (Veo 3.1) - $2.40-$4.80 with audio, $1.20-$2.40 without
-- generate_music: Generate AI music (Suno) - ~$0.05/song
-- execute_preset: Run predefined generation presets
+Supported Tools (9 total):
+- generate_image: Generate AI images ($0.18 fixed, Flux2 Pro)
+- generate_video: Generate AI videos ($1.96 fixed, Veo 3.1)
+- generate_music: Generate AI music ($0.68 fixed, Suno V5)
 - get_task: Check task status and get results
 - list_tasks: List recent tasks
 - check_balance: Check account balance
@@ -18,8 +18,16 @@ Supported Tools (10 total):
 - estimate_video_cost: Estimate video generation cost
 - estimate_music_cost: Estimate music generation cost
 
+Note: execute_preset removed (D#551) - use REST /v3/execute for presets.
+
 Usage:
+    # stdio mode (default, for Claude Desktop)
     python vap_mcp_proxy.py
+    python vap_mcp_proxy.py --mode=stdio
+
+    # HTTP mode (for Glama.ai inspection)
+    python vap_mcp_proxy.py --mode=http
+    python vap_mcp_proxy.py --mode=http --port=8000
 
 Configuration:
     Set VAP_API_KEY environment variable (VAPE_API_KEY also supported for backward compatibility).
@@ -37,15 +45,21 @@ Claude Desktop config (~/.config/Claude/claude_desktop_config.json):
   }
 }
 
+Docker (HTTP mode for Glama):
+    docker run -p 8000:8000 vap-mcp --mode=http
+
 Directive: #233 (Local MCP Proxy)
 Directive: #242 (Veo 3.1 Video)
 Directive: #405 (Documentation)
+Directive: #549 (HTTP Mode for Glama)
 """
 
 import sys
 import json
 import os
 import logging
+import argparse
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from typing import Optional, Dict, Any
 
 # Use httpx for async HTTP (pip install httpx)
@@ -291,7 +305,7 @@ def _handle_estimate_video_cost(arguments: Dict) -> Dict:
     return {
         "content": [{
             "type": "text",
-            "text": f"Video Generation Cost Estimate (Veo 3.1):\n\nDuration: {duration} seconds\nAudio: {'Yes' if generate_audio else 'No'}\nCost: ${cost:.2f}\n\nPricing with audio:\n- 4 seconds: $2.40\n- 6 seconds: $3.60\n- 8 seconds: $4.80\n\nPricing without audio:\n- 4 seconds: $1.20\n- 6 seconds: $1.80\n- 8 seconds: $2.40"
+            "text": f"Video Generation Cost: $1.96 USD (fixed price)\n\nProvider: Veo 3.1\nRequires: Tier 2+"
         }]
     }
 
@@ -491,17 +505,106 @@ def process_request(request: Dict) -> Optional[Dict]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# MAIN LOOP
+# HTTP SERVER (for Glama.ai inspection)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def main():
-    """Main stdio loop."""
-    logger.info("VAP MCP Proxy starting...")
-    logger.info(f"API URL: {API_URL}")
-    logger.info(f"API Key: {'configured' if API_KEY else 'NOT SET'}")
+class MCPHTTPHandler(BaseHTTPRequestHandler):
+    """HTTP handler for MCP JSON-RPC requests."""
 
-    if not API_KEY:
-        logger.warning("VAP_API_KEY not set! Set it via environment variable (VAPE_API_KEY also supported).")
+    def log_message(self, format, *args):
+        """Route HTTP server logs to our logger."""
+        logger.debug(f"HTTP: {format % args}")
+
+    def _send_json_response(self, data: Dict, status: int = 200):
+        """Send JSON response with CORS headers."""
+        response_bytes = json.dumps(data).encode('utf-8')
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Content-Length', len(response_bytes))
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+        self.wfile.write(response_bytes)
+
+    def do_OPTIONS(self):
+        """Handle CORS preflight."""
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+
+    def do_GET(self):
+        """Health check endpoint."""
+        if self.path == '/health' or self.path == '/':
+            self._send_json_response({
+                "status": "ok",
+                "server": "VAP MCP Proxy",
+                "mode": "http",
+                "version": "1.0.0"
+            })
+        else:
+            self._send_json_response({"error": "Not found"}, 404)
+
+    def do_POST(self):
+        """Handle MCP JSON-RPC requests."""
+        try:
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+
+            if not body:
+                self._send_json_response(
+                    create_error(None, -32700, "Empty request body"),
+                    400
+                )
+                return
+
+            logger.debug(f"HTTP Request: {body[:500]}...")
+
+            request = json.loads(body)
+            response = process_request(request)
+
+            if response is None:
+                # Notification - return empty success
+                self._send_json_response({"status": "ok"})
+            else:
+                self._send_json_response(response)
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {e}")
+            self._send_json_response(
+                create_error(None, -32700, f"Parse error: {e}"),
+                400
+            )
+        except Exception as e:
+            logger.error(f"HTTP handler error: {e}", exc_info=True)
+            self._send_json_response(
+                create_error(None, -32000, str(e)),
+                500
+            )
+
+
+def run_http_server(port: int):
+    """Run HTTP server for MCP requests."""
+    server_address = ('', port)
+    httpd = HTTPServer(server_address, MCPHTTPHandler)
+    logger.info(f"VAP MCP HTTP Server listening on port {port}")
+    logger.info(f"Endpoints: POST / (JSON-RPC), GET /health")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        logger.info("Shutting down HTTP server...")
+        httpd.shutdown()
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STDIO MODE (for Claude Desktop)
+# ═══════════════════════════════════════════════════════════════════════════
+
+def run_stdio():
+    """Run stdio loop for Claude Desktop."""
+    logger.info("VAP MCP Proxy starting in stdio mode...")
 
     # Read line by line from stdin
     for line in sys.stdin:
@@ -527,6 +630,42 @@ def main():
             response_json = json.dumps(response)
             logger.debug(f"Sending: {response_json[:200]}...")
             print(response_json, flush=True)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MAIN ENTRYPOINT
+# ═══════════════════════════════════════════════════════════════════════════
+
+def main():
+    """Main entrypoint with mode selection."""
+    parser = argparse.ArgumentParser(
+        description='VAP MCP Proxy - Multi-Mode MCP Server'
+    )
+    parser.add_argument(
+        '--mode',
+        choices=['stdio', 'http'],
+        default='stdio',
+        help='Server mode: stdio (Claude Desktop) or http (Glama.ai)'
+    )
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=int(os.getenv('PORT', '8000')),
+        help='HTTP server port (default: 8000 or PORT env var)'
+    )
+
+    args = parser.parse_args()
+
+    logger.info(f"API URL: {API_URL}")
+    logger.info(f"API Key: {'configured' if API_KEY else 'NOT SET'}")
+
+    if not API_KEY:
+        logger.warning("VAP_API_KEY not set! Set it via environment variable (VAPE_API_KEY also supported).")
+
+    if args.mode == 'http':
+        run_http_server(args.port)
+    else:
+        run_stdio()
 
 
 if __name__ == "__main__":
