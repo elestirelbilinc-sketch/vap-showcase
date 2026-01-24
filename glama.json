@@ -7,12 +7,12 @@
   "version": "1.12.6",
   "description": "MCP server for AI media generation (images, videos, music) with deterministic cost control using reserve-burn-refund billing model",
   "author": {
-    "name": "elestirelbilinc-sketch",
-    "url": "https://github.com/elestirelbilinc-sketch"
+    "name": "VAP Media",
+    "url": "https://github.com/vapagentmedia"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elestirelbilinc-sketch/vap-showcase"
+    "url": "https://github.com/vapagentmedia/vap-showcase"
   },
   "homepage": "https://api.vapagent.com",
   "documentation": "https://api.vapagent.com/docs",
