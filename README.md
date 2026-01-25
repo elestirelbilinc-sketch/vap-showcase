@@ -3,7 +3,7 @@
 **Generate AI images, videos, and music with deterministic pricing.**
 [![MCP Badge](https://lobehub.com/badge/mcp/elestirelbilinc-sketch-vap-showcase)](https://lobehub.com/mcp/elestirelbilinc-sketch-vap-showcase)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
-[![Version](https://img.shields.io/badge/version-1.12.4-blue.svg)](https://github.com/elestirelbilinc-sketch/vap-showcase/releases)
+[![Version](https://img.shields.io/badge/version-1.12.6-blue.svg)](https://github.com/vapagentmedia/vap-showcase/releases)
 [![Python](https://img.shields.io/badge/python-3.11+-green.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Get Started](https://img.shields.io/badge/Get%20Started-Dashboard-6366f1)](https://vapagent.com/dashboard/signup.html)
@@ -29,6 +29,7 @@ When AI agents work with paid APIs, they need:
 - **Cost visibility** – Know exactly what you'll pay before execution
 - **Retry control** – Bounded, predictable retry behavior
 - **Clear ownership** – Every task tracked and accountable
+- **Enterprise auth** – OAuth 2.1 M2M for secure integrations
 
 VAP provides this control layer.
 
@@ -218,6 +219,43 @@ For environments that don't support `headers`, use the local proxy:
 
 ---
 
+## OAuth 2.1 (Enterprise)
+
+For enterprise integrations, VAP supports OAuth 2.1 M2M (machine-to-machine) authentication via [Scalekit](https://scalekit.com).
+
+### How It Works
+
+```
+OAuth Token → MCP Proxy → Validate → Resolve client_id → Agent → Execute
+```
+
+### Setup
+
+```bash
+# 1. Get OAuth token from your identity provider
+curl -X POST "https://your-tenant.scalekit.dev/oauth/token" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=m2m_xxx" \
+  -d "client_secret=your_secret"
+
+# 2. Link OAuth client to your VAP agent (one-time)
+curl -X PUT "https://api.vapagent.com/v3/agents/me/oauth" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"oauth_client_id": "m2m_xxx"}'
+
+# 3. Use OAuth token with MCP
+# The MCP proxy validates tokens and maps to linked agents
+```
+
+### Benefits
+
+- **SSO Integration** – Connect VAP to your existing identity provider
+- **No API Key in Config** – Tokens rotate automatically
+- **Audit Trail** – OAuth events logged separately
+
+---
+
 ## SDK Usage
 
 ### Installation
@@ -323,6 +361,8 @@ print(f"Result: {task.result_url}")
 | `/v3/tasks/{id}` | GET | Retrieve task status |
 | `/v3/tasks/{id}/result` | GET | Retrieve task result |
 | `/v3/balance` | GET | Check account balance |
+| `/v3/agents/me/oauth` | PUT | Link OAuth client (Enterprise) |
+| `/v3/agents/me/oauth` | GET | Check OAuth link status |
 
 **Full API Docs:** [api.vapagent.com/docs](https://api.vapagent.com/docs)
 
