@@ -1,12 +1,12 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.elestirelbilinc-sketch/vap-e",
-  "description": "Flux, Veo, Suno - AI image/video/music generation with reserve-burn-refund billing.",
+  "description": "Flux, Veo, Suno - AI media generation with OAuth 2.1 M2M + reserve-burn-refund.",
   "repository": {
-    "url": "https://github.com/elestirelbilinc-sketch/vap-showcase",
+    "url": "https://github.com/vapagentmedia/vap-showcase",
     "source": "github"
   },
-  "version": "1.13.1",
+  "version": "1.14.0",
   "remotes": [
     {
       "type": "streamable-http",
