@@ -432,3 +432,8 @@ MIT License – see the [LICENSE](LICENSE) file for details.
 **VAP Media · Unified MCP Server for AI Agents**
 
 *"Deterministic media production for AI agents."*
+
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/elestirelbilinc-sketch-vap-showcase).
+
